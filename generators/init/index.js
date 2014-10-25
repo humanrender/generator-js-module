@@ -17,9 +17,10 @@ module.exports = generators.Base.extend({
   writing:{
     copyFiles: function(){
       this.template('.gitignore', ".gitignore");
+      this.template('test/helpers/helpers.js', "test/helpers/helpers.js");
     },
-    setGruntfileTasks: function(){
-      this.gruntfile.registerTask('build', ['sass', 'directives']);
+    registerGruntTasks: function(){
+      this.gruntfile.registerTask('build', ['build:styles', 'build:scripts']);
       this.gruntfile.registerTask('build:styles', [
           'sass'
       ]);
@@ -27,7 +28,20 @@ module.exports = generators.Base.extend({
           'jshint',
           'directives'
       ]);
+      this.gruntfile.registerTask('test', [
+          'build:scripts',
+          'jasmine'
+      ]);
       this.gruntfile.registerTask('default', ['build', 'watch']);
+    },
+    loadGruntTasks: function(){
+      this.gruntfile.loadNpmTasks("grunt-sass");
+      this.gruntfile.loadNpmTasks("grunt-contrib-jasmine");
+      this.gruntfile.loadNpmTasks("grunt-sprockets-directives");
+      this.gruntfile.loadNpmTasks("grunt-contrib-watch");
+      this.gruntfile.loadNpmTasks("grunt-contrib-jshint");
+    },
+    configGruntTasks: function(){
       this.gruntfile.insertConfig("sass", '{styles:{'+
         'cwd:"src/",'+
         'src:["*.scss"],'+
@@ -51,16 +65,26 @@ module.exports = generators.Base.extend({
         'styles:{'+
           'files: ["src/**/*.scss"],'+
           'tasks: ["build:styles"]'+
+        '},'+
+        'test:{'+
+          'files: ["test/**/*.js"],'+
+          'tasks: ["test"]'+
         '}'+
       '}');
       this.gruntfile.insertConfig("jshint", '{'+
           'scripts:["src/**/*.js"]'+
       '}');
-      this.gruntfile.loadNpmTasks("grunt-sass");
-      this.gruntfile.loadNpmTasks("grunt-contrib-jasmine");
-      this.gruntfile.loadNpmTasks("grunt-sprockets-directives");
-      this.gruntfile.loadNpmTasks("grunt-contrib-watch");
-      this.gruntfile.loadNpmTasks("grunt-contrib-jshint");
+      this.gruntfile.insertConfig("jasmine", '{'+
+        'specs: {'+
+          'src: "dist/**/*.js",'+
+          'options: {'+
+            'keepRunner: true,'+
+            'specs: "test/specs/*.spec.js",'+
+            'vendor: [],'+
+            'helpers: ["test/helpers/*.js"]'+
+          '}'+
+        '}'+
+      '}')
     }
   }
 });
