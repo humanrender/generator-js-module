@@ -1,0 +1,7 @@
+{
+  "name": "<%=toParam(name)%>",
+  "description": "<%=description%>",
+  "private": true,
+  "main": [],
+  "keywords": "<%=keywords%>"
+}

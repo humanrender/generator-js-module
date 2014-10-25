@@ -1,23 +1,53 @@
-var generators = require('yeoman-generator');
+var generators = require('yeoman-generator'),
+    changeCase = require('change-case');
 
 module.exports = generators.Base.extend({
+  init: function(){
+    this.toParam = function(str){
+      return changeCase.param(str)
+    }
+  },
   initializing:{
+    promptName: function () {
+      var done = this.async();
+      this.prompt([{
+          type: 'input', name: 'name',
+          message : 'Your package name',
+          default : this.appname
+        },
+        {
+          type: 'input', name: 'description',
+          message: 'Your package description',
+        },
+        {
+          type: 'input', name: 'keywords',
+          message: 'Your package keywords (separated by spaces)',
+        }],
+        function (answers) {
+          this.name = answers.name;
+          this.description = answers.description;
+          this.keywords = answers.keywords;
+          done();
+        }.bind(this));
+    },
     installDependencies: function(){
       var done = this.async();
       this.log("Installing npm dependencies");
-      done()
-      // this.npmInstall([ 'grunt',
-      //                   'grunt-sass',
-      //                   'grunt-contrib-jasmine',
-      //                   'grunt-sprockets-directives',
-      //                   'grunt-contrib-watch',
-      //                   'grunt-autoprefixer'
-      //                 ], { 'saveDev': true }, done);
+      // done()
+      this.npmInstall([ 'grunt',
+                        'grunt-sass',
+                        'grunt-contrib-jasmine',
+                        'grunt-sprockets-directives',
+                        'grunt-contrib-watch',
+                        'grunt-autoprefixer'
+                      ], { 'saveDev': true }, done);
     }
   },
   writing:{
     copyFiles: function(){
       this.template('.gitignore', ".gitignore");
+      this.template('package.json', "package.json");
+      this.template('bower.json', "bower.json");
       this.template('test/helpers/helpers.js', "test/helpers/helpers.js");
     },
     registerGruntTasks: function(){
