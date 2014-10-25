@@ -10,7 +10,8 @@ module.exports = generators.Base.extend({
       //                   'grunt-sass',
       //                   'grunt-contrib-jasmine',
       //                   'grunt-sprockets-directives',
-      //                   'grunt-contrib-watch'
+      //                   'grunt-contrib-watch',
+      //                   'grunt-autoprefixer'
       //                 ], { 'saveDev': true }, done);
     }
   },
@@ -22,7 +23,8 @@ module.exports = generators.Base.extend({
     registerGruntTasks: function(){
       this.gruntfile.registerTask('build', ['build:styles', 'build:scripts']);
       this.gruntfile.registerTask('build:styles', [
-          'sass'
+          'sass',
+          'autoprefixer'
       ]);
       this.gruntfile.registerTask('build:scripts', [
           'jshint',
@@ -40,13 +42,16 @@ module.exports = generators.Base.extend({
       this.gruntfile.loadNpmTasks("grunt-sprockets-directives");
       this.gruntfile.loadNpmTasks("grunt-contrib-watch");
       this.gruntfile.loadNpmTasks("grunt-contrib-jshint");
+      this.gruntfile.loadNpmTasks("grunt-autoprefixer");
+      
     },
     configGruntTasks: function(){
       this.gruntfile.insertConfig("sass", '{styles:{'+
         'cwd:"src/",'+
         'src:["*.scss"],'+
         'expand:true,'+
-        'dest:"dist/"'+
+        'dest:"dist/",'+
+        'ext:".css"'+
       '}}');
       this.gruntfile.insertConfig("directives", '{scripts:{'+
         'cwd:"src/",'+
@@ -83,6 +88,15 @@ module.exports = generators.Base.extend({
             'vendor: [],'+
             'helpers: ["test/helpers/*.js"]'+
           '}'+
+        '}'+
+      '}')
+      this.gruntfile.insertConfig("autoprefixer", '{'+
+        'styles: {'+
+          'expand: true,'+
+          'flatten: true,'+
+          'cwd: "dist/",'+
+          'src: "**/*.css",'+
+          'dest: "dist/"'+
         '}'+
       '}')
     }
