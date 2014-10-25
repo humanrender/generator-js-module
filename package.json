@@ -1,0 +1,11 @@
+{
+  "name": "generator-js-module",
+  "version": "0.0.1",
+  "description": "Javascript module Yeoman generator",
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.17.7"
+  }
+}
