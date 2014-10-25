@@ -1,7 +1,10 @@
 {
   "name": "<%=toParam(name)%>",
   "description": "<%=description%>",
+  "keywords": "<%=keywords%>",
+  "repository": "<%=repository%>",
   "private": true,
   "main": [],
-  "keywords": "<%=keywords%>"
+  "dependencies": [],
+  "devDependencies": []
 }

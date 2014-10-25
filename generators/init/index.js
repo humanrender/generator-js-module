@@ -22,13 +22,24 @@ module.exports = generators.Base.extend({
         {
           type: 'input', name: 'keywords',
           message: 'Your package keywords (separated by spaces)',
+        },
+        {
+          type: 'input', name: 'repository',
+          message: 'Your package repository',
         }],
         function (answers) {
           this.name = answers.name;
           this.description = answers.description;
           this.keywords = answers.keywords;
+          this.repository = answers.repository;
           done();
         }.bind(this));
+    },
+    copyFiles: function(){
+      this.template('.gitignore', ".gitignore");
+      this.template('package.json', "package.json");
+      this.template('bower.json', "bower.json");
+      this.template('test/helpers/helpers.js', "test/helpers/helpers.js");
     },
     installDependencies: function(){
       var done = this.async();
@@ -44,12 +55,6 @@ module.exports = generators.Base.extend({
     }
   },
   writing:{
-    copyFiles: function(){
-      this.template('.gitignore', ".gitignore");
-      this.template('package.json', "package.json");
-      this.template('bower.json', "bower.json");
-      this.template('test/helpers/helpers.js', "test/helpers/helpers.js");
-    },
     registerGruntTasks: function(){
       this.gruntfile.registerTask('build', ['build:styles', 'build:scripts']);
       this.gruntfile.registerTask('build:styles', [
