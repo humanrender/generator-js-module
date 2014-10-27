@@ -5,6 +5,7 @@
   "keywords": [
     "yeoman-generator"
   ],
+  "main": "generators/app/index.js",
   "dependencies": {
     "change-case": "^2.1.5",
     "yeoman-generator": "^0.17.7"
