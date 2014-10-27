@@ -36,22 +36,11 @@ module.exports = generators.Base.extend({
         }.bind(this));
     },
     copyFiles: function(){
+      this.log("Copying files")
       this.template('.gitignore', ".gitignore");
       this.template('package.json', "package.json");
       this.template('bower.json', "bower.json");
       this.template('test/helpers/helpers.js', "test/helpers/helpers.js");
-    },
-    installDependencies: function(){
-      var done = this.async();
-      this.log("Installing npm dependencies");
-      // done()
-      this.npmInstall([ 'grunt',
-                        'grunt-sass',
-                        'grunt-contrib-jasmine',
-                        'grunt-sprockets-directives',
-                        'grunt-contrib-watch',
-                        'grunt-autoprefixer'
-                      ], { 'saveDev': true }, done);
     }
   },
   writing:{
@@ -69,6 +58,10 @@ module.exports = generators.Base.extend({
           'build:scripts',
           'jasmine'
       ]);
+      this.gruntfile.registerTask('docs', [
+          'jshint',
+          'jsdoc'
+      ]);
       this.gruntfile.registerTask('default', ['build', 'watch']);
     },
     loadGruntTasks: function(){
@@ -78,9 +71,10 @@ module.exports = generators.Base.extend({
       this.gruntfile.loadNpmTasks("grunt-contrib-watch");
       this.gruntfile.loadNpmTasks("grunt-contrib-jshint");
       this.gruntfile.loadNpmTasks("grunt-autoprefixer");
-      
+      this.gruntfile.loadNpmTasks("grunt-jsdoc");      
     },
     configGruntTasks: function(){
+
       this.gruntfile.insertConfig("sass", '{styles:{'+
         'cwd:"src/",'+
         'src:["*.scss"],'+
@@ -134,6 +128,30 @@ module.exports = generators.Base.extend({
           'dest: "dist/"'+
         '}'+
       '}')
+      this.gruntfile.insertConfig("jsdoc", '{'+
+        'dist : {'+
+          'src: ["src/*.js"], '+
+          'options: {'+
+            'destination: "docs"'+
+          '}'+
+        '}'+
+      '}');
+    }
+  },
+  install: {
+    installDependencies: function(){
+      var done = this.async();
+      this.log("Installing npm dependencies");
+      // done()
+      this.npmInstall([ 'grunt',
+                        'grunt-sass',
+                        'grunt-contrib-jasmine',
+                        'grunt-sprockets-directives',
+                        'grunt-contrib-watch',
+                        'grunt-autoprefixer',
+                        'grunt-contrib-jshint',
+                        'grunt-jsdoc',
+                      ], { 'saveDev': true }, done);
     }
   }
 });

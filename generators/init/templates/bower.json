@@ -5,6 +5,6 @@
   "repository": "<%=repository%>",
   "private": true,
   "main": [],
-  "dependencies": [],
-  "devDependencies": []
+  "dependencies": {},
+  "devDependencies": {}
 }
