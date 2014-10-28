@@ -3,38 +3,50 @@ var generators = require('yeoman-generator'),
 
 module.exports = generators.Base.extend({
   init: function(){
+    this.option([{
+      name: "npm-install",
+      defaults: false,
+      type: "boolean"
+    }])
     this.toParam = function(str){
       return changeCase.param(str)
     }
   },
-  initializing:{
-    promptName: function () {
+  _promptVars: function(data, done){
+    var promptNext = function(data){
+      var n = (data || []).shift();
+      if(n){
+        this.prompt(n, function (answers) {
+          this[n.name] = answers[n.name];
+          promptNext(data);
+        }.bind(this))
+      }else{
+        done();
+      }
+    }.bind(this);
+    promptNext(data)
+    
+  },
+  prompting:{
+    prompt: function () {
       var done = this.async();
-      this.prompt([{
-          type: 'input', name: 'name',
-          message : 'Your package name',
-          default : this.appname
-        },
-        {
-          type: 'input', name: 'description',
-          message: 'Your package description',
-        },
-        {
-          type: 'input', name: 'keywords',
-          message: 'Your package keywords (separated by spaces)',
-        },
-        {
-          type: 'input', name: 'repository',
-          message: 'Your package repository',
-        }],
-        function (answers) {
-          this.name = answers.name;
-          this.description = answers.description;
-          this.keywords = answers.keywords;
-          this.repository = answers.repository;
-          done();
-        }.bind(this));
-    },
+      this._promptVars([{
+        type: 'input', name: 'name',
+        message : 'Your package name',
+        default : this.appname
+      },{
+        type: 'input', name: 'description',
+        message: 'Your package description',
+      },{
+        type: 'input', name: 'keywords',
+        message: 'Your package keywords (separated by spaces)',
+      },{
+        type: 'input', name: 'repository',
+        message: 'Your package repository',
+      }], done)
+    }
+  },
+  configuring: {
     copyFiles: function(){
       this.log("Copying files")
       this.template('.gitignore', ".gitignore");
@@ -141,17 +153,21 @@ module.exports = generators.Base.extend({
   install: {
     installDependencies: function(){
       var done = this.async();
-      this.log("Installing npm dependencies");
-      // done()
-      this.npmInstall([ 'grunt',
-                        'grunt-sass',
-                        'grunt-contrib-jasmine',
-                        'grunt-sprockets-directives',
-                        'grunt-contrib-watch',
-                        'grunt-autoprefixer',
-                        'grunt-contrib-jshint',
-                        'grunt-jsdoc',
-                      ], { 'saveDev': true }, done);
+      if(this.options["npm-install"] != false){
+        this.log("Installing npm dependencies");
+        this.npmInstall([ 'grunt',
+                          'grunt-sass',
+                          'grunt-contrib-jasmine',
+                          'grunt-sprockets-directives',
+                          'grunt-contrib-watch',
+                          'grunt-autoprefixer',
+                          'grunt-contrib-jshint',
+                          'grunt-jsdoc',
+                        ], { 'saveDev': true }, done);
+      }else{
+        this.log("Skipping npm dependencies installation");
+        done();
+      }
     }
   }
 });

@@ -22,13 +22,15 @@ module.exports = generators.Base.extend({
       this.template('module/spec.js', "test/specs/"+this.name+'.spec.js');
     },
     addToBower: function(){
-      var bowerFile = this.dest.readJSON('bower.json');
-      if(!bowerFile.main) bowerFile.main = [];
-      if(bowerFile.main.indexOf("dist/"+this.name+'.js') == -1)
-        bowerFile.main.push("dist/"+this.name+'.js')
-      if(bowerFile.main.indexOf("dist/"+this.name+'.css') == -1)
-        bowerFile.main.push("dist/"+this.name+'.css')
-      this.dest.write("bower.json", JSON.stringify(bowerFile, null, 2))
+      if(this.dest.exists("bower.json")){
+        var bowerFile = this.dest.readJSON('bower.json');
+        if(!bowerFile.main) bowerFile.main = [];
+        if(bowerFile.main.indexOf("dist/"+this.name+'.js') == -1)
+          bowerFile.main.push("dist/"+this.name+'.js')
+        if(bowerFile.main.indexOf("dist/"+this.name+'.css') == -1)
+          bowerFile.main.push("dist/"+this.name+'.css')
+        this.dest.write("bower.json", JSON.stringify(bowerFile, null, 2))
+      }
     }
   }
 });
