@@ -2,3 +2,4 @@ bower_components/
 .grunt
 node_modules/
 .sass-cache/
+_SpecRunner.html
